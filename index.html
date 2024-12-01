@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <script>
+        async function calculate() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const operator = document.getElementById('operator').value;
+
+            try {
+                const response = await fetch('http://localhost:4000/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ num1, num2, operator }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('result').textContent = `Result: ${data.result}`;
+                } else {
+                    document.getElementById('result').textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                console.error('Error connecting to the server:', error);
+                document.getElementById('result').textContent = 'Could not connect to server.';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Calculator</h1>
+    <input id="num1" type="number" placeholder="Enter first number" required>
+    <select id="operator">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+    </select>
+    <input id="num2" type="number" placeholder="Enter second number" required>
+    <button onclick="calculate()">Calculate</button>
+    <p id="result"></p>
+</body>
+</html>
